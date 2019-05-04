@@ -1,0 +1,96 @@
+plugins {
+    id 'com.android.library'
+}
+
+ext {
+    PUBLISH_GROUP_ID = 'com.tom_roush'
+    PUBLISH_ARTIFACT_ID = 'pdfbox-android'
+    PUBLISH_VERSION = VERSION_NAME
+}
+
+android {
+    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
+    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+    compileOptions.encoding = 'UTF-8'
+
+    defaultConfig {
+        minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
+        versionName project.VERSION_NAME
+        versionCode Integer.parseInt(project.VERSION_CODE)
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
+    sourceSets {
+        androidTest {
+            assets.srcDirs = ['src/test/resources'];
+        }
+    }
+
+    // Rename the output aars
+    android.libraryVariants.all { variant ->
+        variant.outputs.all { output ->
+            if (outputFileName.endsWith('.aar')) {
+                outputFileName = "pdfbox-android-${variant.name}-${defaultConfig.versionName}.aar"
+            }
+        }
+    }
+}
+
+// Test output from https://stackoverflow.com/questions/3963708/gradle-how-to-display-test-results-in-the-console-in-real-time
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
+tasks.withType(Test) {
+    // Performance improvements for tests
+    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+    reports.html.enabled = false
+    reports.junitXml.enabled = false
+
+    testLogging {
+        // set options for log level LIFECYCLE
+        events TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED, TestLogEvent.STANDARD_OUT, TestLogEvent.STANDARD_ERROR
+        showExceptions true
+        exceptionFormat TestExceptionFormat.FULL
+        showCauses true
+        showStackTraces true
+
+        info.events = debug.events
+        info.exceptionFormat = debug.exceptionFormat
+
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + output.length() + endItem.length()
+                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+            }
+        }
+    }
+}
+
+dependencies {
+    api 'com.madgag.spongycastle:core:1.58.0.0'
+    api 'com.madgag.spongycastle:bcpkix-jdk15on:1.58.0.0'
+    api 'com.madgag.spongycastle:prov:1.58.0.0'
+
+    // Test dependencies
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+}
+
+apply from: 'bintray-release.gradle'

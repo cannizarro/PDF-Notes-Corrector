@@ -1,0 +1,43 @@
+sudo: required
+language: android
+android:
+  components:
+    - tools
+    - tools
+    - platform-tools
+
+    - build-tools-28.0.3
+    - android-21
+    - android-28
+    - sys-img-armeabi-v7a-android-21
+    - extra-android-support
+
+jdk:
+  - oraclejdk8
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -rf $HOME/.gradle/caches/*/plugin-resolution
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+# Emulator Management: Create, Start and Wait
+before_script:
+  - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a --sdcard 200M
+  - emulator -avd test -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
+
+script:
+  - adb logcat *:S TestRunner:V & LOGCAT_PID=$!
+  - ./gradlew build test connectedCheck
+  - if [ -n "$LOGCAT_PID" ] ; then kill $LOGCAT_PID; fi
+
+after_success:
+  - if [[ $TRAVIS_REPO_SLUG == 'TomRoush/PdfBox-Android' && $TRAVIS_BRANCH == 'master' &&
+    $TRAVIS_PULL_REQUEST == 'false' ]] && ! grep -q SNAPSHOT gradle.properties; then
+    ./gradlew bintrayUpload;
+    fi;
