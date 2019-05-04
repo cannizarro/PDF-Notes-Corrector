@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:title="Rotate Left"
+        android:id="@+id/left"
+        ></item>
+    <item
+        android:title="Rotate Right"
+        android:id="@+id/right"
+        ></item>
+    <item
+        android:title="Save image(s) to device"
+        android:id="@+id/save"
+        ></item>
+    <item
+        android:title="Delete"
+        android:id="@+id/del"
+        ></item>
+
+</menu>

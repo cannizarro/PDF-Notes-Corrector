@@ -14,6 +14,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -45,23 +48,22 @@ public class process extends AppCompatActivity {
     File root;
     InputStream file;
     String pdfName="";
+    File myDir;
     Bitmap bit;
     int i;
-    File myDir;
     ArrayList<Bitmap> images;
     RecyclerView recyclerView;
     //Creating a child of AsyncTask class named Save to run the saving the image procedure for saving each image in order of their pages
-    public class Save extends AsyncTask<Void, Void, Void>
+    public class Save extends AsyncTask<Integer, Void, Void>
     {
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(Integer... imageIndices) {
             try {
-                String path = myDir.getAbsolutePath() + "/" + String.valueOf(i) + ".jpg";
+                String path = myDir.getAbsolutePath() + "/" + imageIndices[0] + ".jpg";
                 Log.i("pathh", path);
                 FileOutputStream fileOut = new FileOutputStream(path);
-                bit.compress(Bitmap.CompressFormat.JPEG, 100, fileOut);
+                images.get(imageIndices[0]).compress(Bitmap.CompressFormat.JPEG, 100, fileOut);
                 fileOut.close();
-
                 Log.i("pdff", "Image Saved named : " + String.valueOf(i));
             }
             catch (Exception e)
@@ -185,6 +187,67 @@ public class process extends AppCompatActivity {
     }
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater=getMenuInflater();
+        menuInflater.inflate(R.menu.main_menu,menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+
+        switch(item.getItemId())
+        {
+            case R.id.left:
+
+                break;
+
+            case R.id.right:
+
+                break;
+
+            case R.id.save:
+
+
+                for(Integer iter : RecyclerViewAdapter.mSelectedIndex)
+                {
+                    Save save=new Save();
+                    save.execute(iter);
+                }
+
+                break;
+
+            case R.id.del:
+
+                Log.i("recyy out",RecyclerViewAdapter.mSelectedIndex.toString() + "*/*///*/*/*" + images.size());
+                int index;
+
+                for(int i=0 ; i<RecyclerViewAdapter.mSelectedIndex.size() ; i++)
+                {
+                    index=RecyclerViewAdapter.mSelectedIndex.get(i);
+                    images.remove((int)index);
+                    for(int iter : RecyclerViewAdapter.mSelectedIndex)
+                    {
+                        if(iter > index)
+                        {
+                            RecyclerViewAdapter.mSelectedIndex.set(RecyclerViewAdapter.mSelectedIndex.indexOf(iter),iter-1);
+                        }
+                    }
+                    Log.i("recyy",RecyclerViewAdapter.mSelectedIndex.toString() + "*/*///*/*/*" + images.size());
+                }
+                RecyclerViewAdapter.mSelectedIndex.clear();
+                addRecycler();
+
+
+                break;
+
+        }
+
+        return false;
+    }
 }
 
 

@@ -19,11 +19,11 @@ import java.util.ArrayList;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
     private static final String TAG = "RecyclerViewAdapter";
-    int mSelectedItemPosition=-1;
 
     //vars
     ArrayList<Bitmap> mpage;
-    ArrayList<Integer> mSelectedIndex=new ArrayList<>();
+    // Declaring static because selected index should also exit in memeory until the recyclerVIew is up
+    public static ArrayList<Integer> mSelectedIndex=new ArrayList<>();
     Context mContext;
 
     public RecyclerViewAdapter(ArrayList<Bitmap> mpage, Context mContext) {
