@@ -14,7 +14,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.tom_roush.pdfbox.cos.COSName;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
@@ -47,7 +49,7 @@ public class process extends AppCompatActivity {
     int i;
     File myDir;
     ArrayList<Bitmap> images;
-
+    RecyclerView recyclerView;
     //Creating a child of AsyncTask class named Save to run the saving the image procedure for saving each image in order of their pages
     public class Save extends AsyncTask<Void, Void, Void>
     {
@@ -125,6 +127,8 @@ public class process extends AppCompatActivity {
         Log.i("helll","Completed CreateImages() from onCreate");
 
         addRecycler();
+
+
     }
 
 
@@ -174,7 +178,7 @@ public class process extends AppCompatActivity {
 
     public void addRecycler()
     {
-        RecyclerView recyclerView=findViewById(R.id.recyclerView);
+        recyclerView=findViewById(R.id.recyclerView);
         RecyclerViewAdapter adapter=new RecyclerViewAdapter(images,this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

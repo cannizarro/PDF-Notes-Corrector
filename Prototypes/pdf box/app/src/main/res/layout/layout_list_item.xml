@@ -6,6 +6,8 @@
     android:padding="5dp"
     android:id="@+id/parent_layout"
     android:background="@drawable/border"
+    android:clickable="true"
+    android:longClickable="true"
     >
 
     <TextView
