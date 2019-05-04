@@ -14,6 +14,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 
@@ -84,7 +86,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
 
         Log.d(TAG, "onBindViewHolder: called.");
-        viewHolder.page.setImageBitmap(mpage.get(i));
+        Glide.with(mContext).load(mpage.get(i)).into(viewHolder.page);
         viewHolder.pageNo.setText(i+1 + ".");
 
         if(mSelectedIndex.contains(i)){
