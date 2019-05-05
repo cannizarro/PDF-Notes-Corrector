@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tom_roush.pdfbox.cos.COSName;
+import com.tom_roush.pdfbox.filter.FilterFactory;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
@@ -44,11 +46,13 @@ import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import com.tom_roush.pdfbox.util.PDFBoxResourceLoader;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -57,6 +61,7 @@ public class process extends AppCompatActivity {
     private static final String TAG = "process";
 
     //vars
+    PDDocument document;
     Animation anim;
     ProgressBar progressBar;
     TextView saving;
@@ -67,7 +72,7 @@ public class process extends AppCompatActivity {
     String pdfName="";
     File myDir;
     Bitmap bit;
-    int i;
+    int i, countPages=0;
     ArrayList<Bitmap> images;
     RecyclerView recyclerView;
     //Creating a child of AsyncTask class named Save to run the saving the image procedure for saving each image in order of their pages
@@ -81,7 +86,7 @@ public class process extends AppCompatActivity {
                 FileOutputStream fileOut = new FileOutputStream(path);
                 images.get(imageIndices[0]).compress(Bitmap.CompressFormat.JPEG, 100, fileOut);
                 fileOut.close();
-                Log.i("pdff", "Image Saved named : " + String.valueOf(i));
+                Log.i("pdff", "Image Saved named : " +i);
             }
             catch (Exception e)
             {
@@ -91,22 +96,75 @@ public class process extends AppCompatActivity {
         }
     }
 
-    public class Pdf extends AsyncTask<Void,Integer,Void>
+    public class PDFPages extends AsyncTask<Bitmap,Integer,Void>
     {
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(Bitmap... voids) {
 
-            createPdf();
+            try {
+                Bitmap image=voids[0];
+                PDPage page = new PDPage();
+                document.addPage(page);
+                // Define a content stream for adding to the PDF
+                PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+                PDImageXObject ximage = LosslessFactory.createFromImage(document, image);
+
+
+                float w = image.getWidth();
+                float h = image.getHeight();
+
+                float x_pos = page.getCropBox().getWidth();
+                float y_pos = page.getCropBox().getHeight();
+
+                if (w > h) {
+                    h = h * (x_pos / w);
+                    w = x_pos;
+                } else {
+                    w = w * (y_pos / h);
+                    h = y_pos;
+                }
+
+                float x_adjusted = (x_pos - w) / 2;
+                float y_adjusted = (y_pos - h) / 2;
+
+                contentStream.drawImage(ximage, x_adjusted, y_adjusted, w, h);
+
+                // Make sure that the content stream is closed:
+                contentStream.close();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            progressBar.setVisibility(View.INVISIBLE);
-            saving.setVisibility(View.INVISIBLE);
-            anim.cancel();
+
+            countPages = countPages + 1;
+
+            if(countPages == images.size()) {
+                try {
+                    // Save the final pdf document to a file
+                    final String path = myDir.getAbsolutePath() + "/Created.pdf";
+
+                    document.save(path);
+                    document.close();
+
+                    Toast.makeText(process.this, "PDF successfully written to :" + path, Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                progressBar.setVisibility(View.INVISIBLE);
+                saving.setVisibility(View.INVISIBLE);
+                anim.cancel();
+
+            }
 
         }
     }
@@ -244,8 +302,7 @@ public class process extends AppCompatActivity {
                 anim.setRepeatCount(Animation.INFINITE);
                 saving.startAnimation(anim);
                 progressBar.setProgress(0);
-                Pdf obj=new Pdf();
-                obj.execute();
+                createPdf();
 
                 break;
 
@@ -312,7 +369,7 @@ public class process extends AppCompatActivity {
 
 
     public void createPdf() {
-        PDDocument document = new PDDocument();
+        document = new PDDocument();
 
 
         // Create a new font object selecting one of the PDF base fonts
@@ -328,67 +385,12 @@ public class process extends AppCompatActivity {
 //        {
 //            Log.e("PdfBox-Android-Sample", "Could not load font", e);
 //        }
-
-        try {
-            float x,y;
-
-            y=PDRectangle.A4.getHeight();
-            x=PDRectangle.A4.getWidth()/2;
             for(Bitmap image : images)
             {
-
-
-                PDPage page = new PDPage();
-                document.addPage(page);
-                // Define a content stream for adding to the PDF
-                PDPageContentStream contentStream = new PDPageContentStream(document, page);
-
-                PDImageXObject ximage =LosslessFactory.createFromImage(document, image);
-
-                float w=image.getWidth();
-                float h=image.getHeight();
-
-                float x_pos = page.getCropBox().getWidth();
-                float y_pos = page.getCropBox().getHeight();
-
-                if(w>h)
-                {
-                    h=h*(x_pos/w);
-                    w=x_pos;
-                }
-                else
-                {
-                    w=w*(y_pos/h);
-                    h=y_pos;
-                }
-
-                float x_adjusted = ( x_pos - w ) / 2;
-                float y_adjusted = ( y_pos - h ) / 2;
-
-                contentStream.drawImage(ximage, x_adjusted, y_adjusted, w,h);
-
-
-                    // Make sure that the content stream is closed:
-                contentStream.close();
+                PDFPages page=new PDFPages();
+                page.execute(image);
             }
 
-
-            // Save the final pdf document to a file
-            final String path = myDir.getAbsolutePath() + "/Created.pdf";
-            document.save(path);
-            document.close();
-
-
-
-            this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(process.this, "PDF successfully written to :" + path, Toast.LENGTH_SHORT).show();
-                }
-            });
-
-        } catch (IOException e) {
-            Log.e("PdfBox-Android-Sample", "Exception thrown while creating PDF", e);
-        }
     }
 
     public void rotateLeft()

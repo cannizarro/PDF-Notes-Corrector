@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 uri = resultData.getData();
                 Intent intent = new Intent(getApplicationContext(),process.class);  //Shouldn't have class name starting with small letters
                 intent.putExtra("Uri",uri.toString());
+                error.setVisibility(View.INVISIBLE);
                 startActivity(intent);
             }
         }
