@@ -104,12 +104,13 @@ public class process extends AppCompatActivity {
 
             try {
                 Bitmap image=voids[0];
+
                 PDPage page = new PDPage();
                 document.addPage(page);
                 // Define a content stream for adding to the PDF
                 PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
-                PDImageXObject ximage = LosslessFactory.createFromImage(document, image);
+                PDImageXObject ximage=JPEGFactory.createFromImage(document,image);
 
 
                 float w = image.getWidth();
@@ -231,7 +232,7 @@ public class process extends AppCompatActivity {
                 myDir.mkdirs();
             }
 
-            i=0;
+            i=0;        // i used for counting number of images
             while(iter.hasNext())
             {
                 PDPage page=(PDPage) iter.next();
@@ -247,8 +248,8 @@ public class process extends AppCompatActivity {
                         //Image acquired.
                         if(bit != null) {
                             images.add(bit);
+                            i=i+1;
                         }
-                        i=i+1;
                     }
                 }
             }
@@ -319,7 +320,6 @@ public class process extends AppCompatActivity {
                 break;
 
             case R.id.save:
-
 
                 for(Integer iter : RecyclerViewAdapter.mSelectedIndex)
                 {
