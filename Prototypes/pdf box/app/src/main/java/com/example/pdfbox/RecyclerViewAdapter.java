@@ -6,7 +6,11 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,6 +28,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     //vars
     ArrayList<Bitmap> mpage;
+    android.view.ActionMode actionMode = null;
     // Declaring static because selected index should also exit in memeory until the recyclerVIew is up
     public static ArrayList<Integer> mSelectedIndex=new ArrayList<>();
     Context mContext;
@@ -45,6 +50,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 @Override
                 public boolean onLongClick(View v) {
 
+                    if(actionMode != null)
+                        return false;
+
                     if(mSelectedIndex.size() < 1) {
 
                         int position = viewHolder.getAdapterPosition();
@@ -56,7 +64,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         Log.i("recyy", mSelectedIndex.toString());
                     }
 
-                    return false;
+                    actionMode = ((process) mContext).startActionMode(mActionModeCallback);
+
+                    return true;
                 }
             });
             viewHolder.parent.setOnClickListener(new View.OnClickListener() {
@@ -114,4 +124,57 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             parent=itemView.findViewById(R.id.parent_layout);
         }
     }
+
+    private android.view.ActionMode.Callback mActionModeCallback=new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater menuInflater=mode.getMenuInflater();
+            menuInflater.inflate(R.menu.main_context_menu,menu);
+
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId())
+            {
+                case R.id.right:
+                    process.getInstance().rotateRight();
+
+                    return true;
+                case R.id.left:
+                    process.getInstance().rotateLeft();
+
+                    return true;
+                case R.id.del:
+                    process.getInstance().delete();
+                    mode.finish();
+                    return true;
+                case R.id.save:
+
+                    for(Integer iter : RecyclerViewAdapter.mSelectedIndex)
+                    {
+                        process.Save save=new process.Save();
+                        save.execute(iter);
+                    }
+
+                    Toast.makeText(mContext, "Images saved to path :" + process.getInstance().myDir.getAbsolutePath(), Toast.LENGTH_LONG).show();
+
+                    return true;
+                default:
+                        return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+
+            actionMode=null;
+        }
+    };
 }

@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -70,13 +71,14 @@ public class process extends AppCompatActivity {
     File root;
     InputStream file;
     String pdfName="";
-    File myDir;
+    static File myDir;
     Bitmap bit;
     int i, countPages=0;
-    ArrayList<Bitmap> images;
+    static ArrayList<Bitmap> images;
     RecyclerView recyclerView;
+    static process pro;
     //Creating a child of AsyncTask class named Save to run the saving the image procedure for saving each image in order of their pages
-    public class Save extends AsyncTask<Integer, Void, Void>
+    public static class Save extends AsyncTask<Integer, Void, Void>
     {
         @Override
         protected Void doInBackground(Integer... imageIndices) {
@@ -86,7 +88,7 @@ public class process extends AppCompatActivity {
                 FileOutputStream fileOut = new FileOutputStream(path);
                 images.get(imageIndices[0]).compress(Bitmap.CompressFormat.JPEG, 100, fileOut);
                 fileOut.close();
-                Log.i("pdff", "Image Saved named : " +i);
+                Log.i("pdff", "Image Saved named : " + imageIndices[0]);
             }
             catch (Exception e)
             {
@@ -177,7 +179,9 @@ public class process extends AppCompatActivity {
 
 
         //Setup
+        pro=this;
 
+        recyclerView=findViewById(R.id.recyclerView);
         progressBar=findViewById(R.id.progressBar);
         saving=findViewById(R.id.saving);
         progressBar.setMax(10);
@@ -215,6 +219,12 @@ public class process extends AppCompatActivity {
         addRecycler();
 
 
+
+    }
+
+    public static process getInstance()
+    {
+        return pro;
     }
 
 
@@ -270,7 +280,7 @@ public class process extends AppCompatActivity {
 
     public void addRecycler()
     {
-        recyclerView=findViewById(R.id.recyclerView);
+
         RecyclerViewAdapter adapter=new RecyclerViewAdapter(images,this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -304,36 +314,6 @@ public class process extends AppCompatActivity {
                 saving.startAnimation(anim);
                 progressBar.setProgress(0);
                 createPdf();
-
-                break;
-
-            case R.id.left:
-
-                rotateLeft();
-
-                break;
-
-            case R.id.right:
-
-                rotateRight();
-
-                break;
-
-            case R.id.save:
-
-                for(Integer iter : RecyclerViewAdapter.mSelectedIndex)
-                {
-                    Save save=new Save();
-                    save.execute(iter);
-                }
-
-                Toast.makeText(this, "Images saved to path :" + myDir.getAbsolutePath(), Toast.LENGTH_LONG).show();
-
-                break;
-
-            case R.id.del:
-
-                delete();
 
                 break;
 

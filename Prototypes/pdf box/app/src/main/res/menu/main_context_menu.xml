@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item
-        android:id="@+id/app_bar_switch"
-        android:title="Switch"
-        app:actionLayout="@layout/switch_item" />
+    <item android:title="Rotate Left"
+        android:id="@+id/left"
+        android:icon="@drawable/ic_rotate_left"
+        /><item android:title="Rotate Right"
+    android:id="@+id/right"
+    android:icon="@drawable/ic_rotate_right"
+    /><item android:title="Save"
+    android:id="@+id/save"
+    android:icon="@drawable/ic_save_black_24dp"
+    />
+    <item android:title="Delete"
+        android:id="@+id/del"
+        android:icon="@drawable/ic_delete_black_24dp"
+        />
 </menu>
