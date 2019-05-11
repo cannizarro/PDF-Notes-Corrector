@@ -97,6 +97,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
 
+
         Glide.with(mContext).load(mpage.get(i)).into(viewHolder.page);
         viewHolder.pageNo.setText(i+1 + ".");
 

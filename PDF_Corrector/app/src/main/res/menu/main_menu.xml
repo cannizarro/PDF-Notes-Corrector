@@ -5,7 +5,6 @@
     <item
         android:title="Create PDF"
         android:id="@+id/pdf"
-        app:showAsAction="always"
         android:icon="@drawable/ic_save_black_24dp"
-        ></item>
+        app:showAsAction="always|withText"/>
 </menu>

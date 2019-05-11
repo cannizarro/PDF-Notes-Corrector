@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,6 +26,7 @@ import com.tom_roush.pdfbox.pdmodel.PDPage;
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream;
 import com.tom_roush.pdfbox.pdmodel.PDPageTree;
 import com.tom_roush.pdfbox.pdmodel.PDResources;
+import com.tom_roush.pdfbox.pdmodel.common.function.PDFunctionType4;
 import com.tom_roush.pdfbox.pdmodel.font.PDFont;
 import com.tom_roush.pdfbox.pdmodel.font.PDType1Font;
 import com.tom_roush.pdfbox.pdmodel.graphics.PDXObject;
@@ -37,6 +37,7 @@ import com.tom_roush.pdfbox.util.PDFBoxResourceLoader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -44,7 +45,7 @@ import java.util.Iterator;
 public class PDFProcess extends AppCompatActivity {
 
     //PDF related vars
-    PDDocument document;
+    static PDDocument document;
     Uri filePath;
     File root;
     InputStream file;
@@ -55,6 +56,9 @@ public class PDFProcess extends AppCompatActivity {
     static ArrayList<Bitmap> images;
     RecyclerView recyclerView;
     static PDFProcess pro;
+    int noOfPages=0;
+    static RecyclerViewAdapter adapter;
+    static boolean isLoaded=false;
 
 
     //UI Related
@@ -62,6 +66,63 @@ public class PDFProcess extends AppCompatActivity {
     ProgressBar progressBar;
     TextView saving;
 
+
+
+
+    public class CreatingImageList extends AsyncTask<PDResources,Void,Void>
+    {
+        @Override
+        protected Void doInBackground(PDResources... resources) {
+             try {
+                 //Tom Roush code that he commented against my issue of not having resources.getImages() method
+                 for (COSName name : resources[0].getXObjectNames()) {
+                     PDXObject xobj = resources[0].getXObject(name);
+                     if (xobj instanceof PDImageXObject) {
+                         bit = ((PDImageXObject) xobj).getImage();
+                         //Image acquired.
+                         if (bit != null) {
+                             images.add(bit);
+                             i = i + 1;
+                         }
+                     }
+                 }
+                 countPages = countPages + 1;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            PDFProcess.getInstance().adapter.notifyDataSetChanged();
+
+
+            if(countPages == noOfPages)
+            {
+                isLoaded=true;
+                if(i == 0)
+                {
+                    Intent intent=new Intent(PDFProcess.this,MainActivity.class);
+                    intent.putExtra("images",i);
+                    startActivity(intent);
+                }
+
+                try {
+                    document.close();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                countPages = 0;
+            }
+
+        }
+    }
 
     //Creating a child of AsyncTask class named Save to run the saving the image procedure for saving each image in order of their pages
     public static class Save extends AsyncTask<Integer, Void, Void>
@@ -97,8 +158,7 @@ public class PDFProcess extends AppCompatActivity {
                 // Define a content stream for adding to the PDF
                 PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
-                PDImageXObject ximage= JPEGFactory.createFromImage(document,image);
-
+                PDImageXObject ximage= JPEGFactory.createFromImage(document,image,0.18f);
 
                 float w = image.getWidth();
                 float h = image.getHeight();
@@ -184,13 +244,11 @@ public class PDFProcess extends AppCompatActivity {
         }
 
         //Logging for debugging
-        Log.i("pathh", pdfName);
+
+        addRecycler();
 
         createImages();
 
-        Log.i("helll","Completed CreateImages() from onCreate");
-
-        addRecycler();
 
     }
 
@@ -220,9 +278,11 @@ public class PDFProcess extends AppCompatActivity {
         try
         {
             //Loading the pdf file
-            PDDocument document = PDDocument.load(file);
+            document = PDDocument.load(file);
             //Getting all the pages in list
             PDPageTree pages= document.getDocumentCatalog().getPages();
+
+            noOfPages=pages.getCount();
             Iterator iter = pages.iterator();
 
             myDir = new File(root.getAbsolutePath(), "PDF/" + pdfName);
@@ -236,43 +296,23 @@ public class PDFProcess extends AppCompatActivity {
                 PDPage page=(PDPage) iter.next();
                 PDResources resources=page.getResources();
 
-                //Tom Roush code that he commented against my issue of not having resources.getImages() method
-                for (COSName name : resources.getXObjectNames())
-                {
-                    PDXObject xobj = resources.getXObject(name);
-                    if (xobj instanceof PDImageXObject)
-                    {
-                        bit = ((PDImageXObject)xobj).getImage();
-                        //Image acquired.
-                        if(bit != null) {
-                            images.add(bit);
-                            i=i+1;
-                        }
-                    }
-                }
+                CreatingImageList object= new CreatingImageList();
+                object.execute(resources);
+
             }
-            if(i == 0)
-            {
-                Intent intent=new Intent(PDFProcess.this,MainActivity.class);
-                intent.putExtra("images",i);
-                startActivity(intent);
-            }
-            document.close();
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-        Log.i("helll","Completed CreateImages()");
     }
 
 
     public void addRecycler()
     {
-
-        RecyclerViewAdapter adapter=new RecyclerViewAdapter(images,this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            adapter=new RecyclerViewAdapter(images, PDFProcess.getInstance());
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(PDFProcess.getInstance()));
     }
 
 
@@ -293,10 +333,18 @@ public class PDFProcess extends AppCompatActivity {
         {
             case R.id.pdf:
 
-                progressBar.setVisibility(View.VISIBLE);
-                saving.setVisibility(View.VISIBLE);
-                animate();
-                createPdf();
+                if(isLoaded)
+                {
+                    progressBar.setVisibility(View.VISIBLE);
+                    saving.setVisibility(View.VISIBLE);
+                    animate();
+                    createPdf();
+                    isLoaded=false;
+                }
+                else
+                {
+                    Toast.makeText(pro, "Please wait until all images get loaded.", Toast.LENGTH_SHORT).show();
+                }
                 return true;
 
             default:
@@ -308,7 +356,6 @@ public class PDFProcess extends AppCompatActivity {
 
     public void delete()
     {
-        Log.i("recyy out",RecyclerViewAdapter.mSelectedIndex.toString() + "*/*///*/*/*" + images.size());
         int index;
 
         for(int i=0 ; i<RecyclerViewAdapter.mSelectedIndex.size() ; i++)
@@ -322,10 +369,9 @@ public class PDFProcess extends AppCompatActivity {
                     RecyclerViewAdapter.mSelectedIndex.set(RecyclerViewAdapter.mSelectedIndex.indexOf(iter),iter-1);
                 }
             }
-            Log.i("recyy",RecyclerViewAdapter.mSelectedIndex.toString() + "*/*///*/*/*" + images.size());
         }
         RecyclerViewAdapter.mSelectedIndex.clear();
-        addRecycler();
+        adapter.notifyDataSetChanged();
 
     }
 
@@ -352,7 +398,7 @@ public class PDFProcess extends AppCompatActivity {
             image=images.get(index);
             images.set(index,Bitmap.createBitmap(image, 0, 0, image.getWidth(), image.getHeight(), matrix, true));
         }
-        addRecycler();
+        adapter.notifyDataSetChanged();
     }
 
 
@@ -366,7 +412,7 @@ public class PDFProcess extends AppCompatActivity {
             image=images.get(index);
             images.set(index,Bitmap.createBitmap(image, 0, 0, image.getWidth(), image.getHeight(), matrix, true));
         }
-        addRecycler();
+        adapter.notifyDataSetChanged();
     }
 
 
