@@ -1,6 +1,6 @@
 # PDF-Notes-Corrector
 
-The app is finally done with the main app source code in [PDF_Corrector](https://github.com/cannizarro/PDF-Notes-Corrector/tree/master/PDF_Corrector) folder and the prototype code in [this](https://github.com/cannizarro/PDF-Notes-Corrector/tree/master/Prototypes). (Dated : 11/05/2019)
+The app is finally done with the main app source code in [PDF_Corrector](https://github.com/cannizarro/PDF-Notes-Corrector/tree/master/PDF_Corrector) folder and the prototype source code in [this](https://github.com/cannizarro/PDF-Notes-Corrector/tree/master/Prototypes). (Dated : 11/05/2019)
 
 This is a personal project born out of my own needs. The app's them is sot
 
@@ -14,7 +14,7 @@ You can also save individual images inside the PDF to your device's internal sto
 
 ## Getting Started
 
-The main apk file is stored in the repository and can be downloaded there or by [clicking here](https://github.com/cannizarro/PDF-Notes-Corrector/raw/master/PDF%20Corrector.apk).
+The main apk file is stored in the repository and can be downloaded there or by [clicking here](https://github.com/cannizarro/PDF-Notes-Corrector/raw/master/PDF_Corrector.apk).
 The two prototypes with different visual aspects have been made. The `.apk` files are stored in the 
 `Prototype APKs` folder and you are welcome to try them. You just need to download them. Believe me the real app will be far more visually appealing than this.
 
