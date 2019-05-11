@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="Select all"
+        android:id="@+id/all"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_select_all_black_24dp"
+        />
+    <item android:title="Rotate Left"
+        android:id="@+id/left"
+        android:icon="@drawable/ic_rotate_left"
+        android:showAsAction="always"
+        /><item android:title="Rotate Right"
+    android:id="@+id/right"
+    android:icon="@drawable/ic_rotate_right"
+    android:showAsAction="always"
+    /><item android:title="Save Image(s)"
+    android:id="@+id/save"
+    app:showAsAction="ifRoom"
+    android:icon="@drawable/ic_save_black_alert_24dp"
+    />
+    <item android:title="Delete Image(s)"
+        android:id="@+id/del"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_delete_black_24dp"
+        />
+</menu>
