@@ -17,12 +17,12 @@
     android:showAsAction="always"
     /><item android:title="Save Image(s)"
     android:id="@+id/save"
-    app:showAsAction="ifRoom"
+    android:showAsAction="always"
     android:icon="@drawable/ic_save_black_alert_24dp"
     />
     <item android:title="Delete Image(s)"
         android:id="@+id/del"
-        app:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:icon="@drawable/ic_delete_black_24dp"
         />
 </menu>
