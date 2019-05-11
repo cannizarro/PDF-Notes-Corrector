@@ -1,6 +1,6 @@
 # PDF-Notes-Corrector
 
-The app is finally done with the main app source code in [PDF_Corrector](https://github.com/cannizarro/PDF-Notes-Corrector/tree/master/PDF_Corrector) and the prototype code in [this](https://github.com/cannizarro/PDF-Notes-Corrector/tree/master/Prototypes). (Dated : 11/05/2019)
+The app is finally done with the main app source code in [PDF_Corrector](https://github.com/cannizarro/PDF-Notes-Corrector/tree/master/PDF_Corrector) folder and the prototype code in [this](https://github.com/cannizarro/PDF-Notes-Corrector/tree/master/Prototypes). (Dated : 11/05/2019)
 
 This is a personal project born out of my own needs. The app's them is sot
 
