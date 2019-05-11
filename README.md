@@ -10,11 +10,12 @@ a hurry and many a times some pages happen to be rotated 90*n degrees (clock or 
 To scan and manipulate images we already have an awesome app (CamScanner) but if we just have the PDF there is no mainstream big name app.
 So I created this app to hopefully fill this hole and just to add some more app building experience in my sad life.
 
-You can also save individual images in the PDF to your device's internal storage in JPEG form.
+You can also save individual images inside the PDF to your device's internal storage in JPEG form.
 
 ## Getting Started
 
-The final app has not yet been made but two prototypes with different visual aspects have been made. The `.apk` files are stored in the 
+The main apk file is stored in the repository and can be downloaded there or by [clicking here](https://github.com/cannizarro/PDF-Notes-Corrector/raw/master/PDF%20Corrector.apk).
+The two prototypes with different visual aspects have been made. The `.apk` files are stored in the 
 `Prototype APKs` folder and you are welcome to try them. You just need to download them. Believe me the real app will be far more visually appealing than this.
 
 
