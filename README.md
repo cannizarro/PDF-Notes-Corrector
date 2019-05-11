@@ -1,8 +1,8 @@
 # PDF-Notes-Corrector
 
-The app is in prototype phase so its visual appearance and the source code are shit . __Please don't kill me, I'm stupid, I can't help it__
+The app is finally done with the main app source code in [PDF_Corrector](https://github.com/cannizarro/PDF-Notes-Corrector/tree/master/PDF_Corrector) and the prototype code in [this](https://github.com/cannizarro/PDF-Notes-Corrector/tree/master/Prototypes). (Dated : 11/05/2019)
 
-This is a personal project born out of my own needs.
+This is a personal project born out of my own needs. The app's them is sot
 
 Remember every time when in your chat group someone sends a camera scanned PDF of some notes or documents. The PDF is generally taken in
 a hurry and many a times some pages happen to be rotated 90*n degrees (clock or anti clock) and then it becomes a pain to read.
@@ -25,16 +25,19 @@ You should also enable `Install from unknown sources` in your settings, if you h
 
 ## How to use
 
-Prototype :
+#Final App :
+  1. Choose PDF by clicking on the add button labelled as Add PDF.
+  2. Then choose PDF from your device or external storage.
+  3. Select any image by long pressing and then further images can be selected by short clicks.
+  4. Now you can perform rotate left or right, select all, save or delete selected images or create PDF with the newly rotated images.
+  5.The PDF and images will then be stored in (this is important) : **In a folder named after the PDF you selected inside another folder named PDF inside your device's download folder**
+  
+#Prototype :
   1. Choose PDF by clicking on the choose PDF button.
   2. Then choose PDF from your device or external storage.
   3. Select any image by long pressing and then further images can be selected by short clicks.
   4. Now you can perform rotate left or right, save selected images or create PDF with the newly rotated images.
   5.The PDF and images will then be stored in (this is important) : **In a folder named after the PDF you selected inside another folder named PDF inside your device's download folder**
-  
-Final App :
-  Forgive me.
-  
  
 
 ## Built With
