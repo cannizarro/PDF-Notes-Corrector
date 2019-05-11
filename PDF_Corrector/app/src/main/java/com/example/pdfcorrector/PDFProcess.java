@@ -158,7 +158,7 @@ public class PDFProcess extends AppCompatActivity {
                 // Define a content stream for adding to the PDF
                 PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
-                PDImageXObject ximage= JPEGFactory.createFromImage(document,image,0.18f);
+                PDImageXObject ximage= JPEGFactory.createFromImage(document,image,0.4f);
 
                 float w = image.getWidth();
                 float h = image.getHeight();
