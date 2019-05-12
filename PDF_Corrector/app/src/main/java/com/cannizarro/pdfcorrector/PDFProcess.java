@@ -261,7 +261,7 @@ public class PDFProcess extends AppCompatActivity {
         progressBar=findViewById(R.id.progressBar);
         saving=findViewById(R.id.saving);
         progressBar.setMax(10);
-        root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
         PDFBoxResourceLoader.init(getApplicationContext());
         images=new ArrayList<>();
     }
@@ -285,7 +285,7 @@ public class PDFProcess extends AppCompatActivity {
             noOfPages=pages.getCount();
             Iterator iter = pages.iterator();
 
-            myDir = new File(root.getAbsolutePath(), "PDF/" + pdfName);
+            myDir = new File(root.getAbsolutePath(), "PDF Corrector/" + pdfName);
             if (!myDir.exists()) {
                 myDir.mkdirs();
             }
