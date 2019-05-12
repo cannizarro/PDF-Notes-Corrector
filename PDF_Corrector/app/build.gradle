@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.example.pdfcorrector"
+        applicationId "com.cannizarro.pdfcorrector"
         minSdkVersion 15
         targetSdkVersion 28
         versionCode 1
