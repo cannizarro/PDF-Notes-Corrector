@@ -2,6 +2,8 @@
 
 (_The downlaod link of the app is here : [Goto play store to download PDF Corrector](https://play.google.com/store/apps/details?id=com.cannizarro.pdfcorrector)._)
 
+Update (17-03-2020): I added FirebaseVision to recognize whether the image is straight or not. I didn't add this feature in the play store distribution because it generally gets confused in images which are actually straight and their exact inverted(+180 degrees) clone.
+
 The app is finally done with the main app source code in [PDF_Corrector](https://github.com/cannizarro/PDF-Notes-Corrector/tree/master/PDF_Corrector) folder and the prototype source code in [this](https://github.com/cannizarro/PDF-Notes-Corrector/tree/master/Prototypes). (Dated : 11/05/2019)
 
 This is a personal project born out of my own needs.
