@@ -15,9 +15,10 @@
     android:id="@+id/right"
     android:icon="@drawable/ic_rotate_right"
     android:showAsAction="always"
-    /><item android:title="Save Image(s)"
+    />
+    <item android:title="Save Image(s)"
     android:id="@+id/save"
-    android:showAsAction="always"
+    android:showAsAction="ifRoom"
     android:icon="@drawable/ic_save_black_alert_24dp"
     />
     <item android:title="Delete Image(s)"

@@ -7,4 +7,9 @@
         android:id="@+id/pdf"
         android:icon="@drawable/ic_save_black_24dp"
         app:showAsAction="always|withText"/>
+    <item android:title="ML Auto-Rotate"
+        android:id="@+id/ml"
+        app:showAsAction="always|withText"
+        android:icon="@drawable/ic_remove_red_eye_black_24dp"
+        />
 </menu>

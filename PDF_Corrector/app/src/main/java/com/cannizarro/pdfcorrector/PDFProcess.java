@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,6 +23,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.tom_roush.pdfbox.cos.COSName;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.PDPage;
@@ -39,6 +48,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class PDFProcess extends AppCompatActivity {
 
@@ -52,6 +62,8 @@ public class PDFProcess extends AppCompatActivity {
     Bitmap bit;
     int i, countPages=0;
     static ArrayList<Bitmap> images;
+    boolean[][] flags;
+    Integer[][] blocksRecognised;
     RecyclerView recyclerView;
     static PDFProcess pro;
     int noOfPages=0;
@@ -63,8 +75,6 @@ public class PDFProcess extends AppCompatActivity {
     Animation anim;
     ProgressBar progressBar;
     TextView saving;
-
-
 
 
     public class CreatingImageList extends AsyncTask<PDResources,Void,Void>
@@ -85,7 +95,6 @@ public class PDFProcess extends AppCompatActivity {
                      }
                  }
                  countPages = countPages + 1;
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -360,6 +369,9 @@ public class PDFProcess extends AppCompatActivity {
 
                 return true;
 
+            case R.id.ml:
+                PDFProcess.getInstance().mLRotate();
+
             default:
                 return false;
 
@@ -388,6 +400,73 @@ public class PDFProcess extends AppCompatActivity {
 
     }
 
+    public void mLRotate(){
+        if(isLoaded){
+            flags = new boolean[images.size()][4];
+            blocksRecognised = new Integer[images.size()][4];
+            Matrix matrix = new Matrix();
+
+            for(int j=0; j<images.size(); j++){
+
+                Bitmap image = images.get(j);
+                for(int i=0; i<4; i++){
+                    matrix.setRotate(i*90);
+                    runTextRecognition(Bitmap.createBitmap(image, 0, 0, image.getWidth(), image.getHeight(), matrix, true), j, i);
+                }
+            }
+        }
+        else{
+            Toast.makeText(pro, "Images are still loading:(", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void runTextRecognition(Bitmap mSelectedImage, final int index, final int rotation) {
+
+        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(mSelectedImage);
+        FirebaseVisionTextRecognizer recognizer = FirebaseVision.getInstance()
+                .getOnDeviceTextRecognizer();
+        recognizer.processImage(image)
+                .addOnSuccessListener(
+                        new OnSuccessListener<FirebaseVisionText>() {
+                            @Override
+                            public void onSuccess(FirebaseVisionText texts) {
+                                processTextRecognitionResult(texts, index, rotation);
+                            }
+                        })
+                .addOnFailureListener(
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Task failed with an exception
+                                e.printStackTrace();
+                            }
+                        });
+    }
+
+    private void processTextRecognitionResult(FirebaseVisionText texts, int index, int rotation) {
+
+        blocksRecognised[index][rotation] = texts.getTextBlocks().size();
+        flags[index][rotation] = true;
+        if(flags[index][0] && flags[index][1] && flags[index][2] && flags[index][3]){
+            Matrix matrix = new Matrix();
+            int max=-1, maxNum=0;
+            for(int i=0; i<4; i++){
+                Log.d(" asrar index: " + index + " rot: " + i, blocksRecognised[index][i] + " ");
+                if(max < blocksRecognised[index][i]){
+                    max = blocksRecognised[index][i];
+                    maxNum = i;
+                }
+            }
+            Log.d(" asrar max: " + max + " maxNum: " + maxNum,  ":( ");
+            int degrees = maxNum*90;
+            matrix.setRotate(degrees);
+            images.set(index, Bitmap.createBitmap(images.get(index), 0, 0, images.get(index).getWidth(), images.get(index).getHeight(), matrix, true));
+            adapter.notifyDataSetChanged();
+            Log.d("asrar" , "Test passed");
+        }
+    }
+
+
 
     public void createPdf() {
         document = new PDDocument();
@@ -401,10 +480,10 @@ public class PDFProcess extends AppCompatActivity {
     }
 
 
-    public void rotateLeft()
+    public void rotateRight()
     {
         Matrix matrix = new Matrix();
-        matrix.postRotate(90);
+        matrix.setRotate(90);
         Bitmap image;
         for(Integer index: RecyclerViewAdapter.mSelectedIndex)
         {
@@ -415,10 +494,10 @@ public class PDFProcess extends AppCompatActivity {
     }
 
 
-    public void rotateRight()
+    public void rotateLeft()
     {
         Matrix matrix = new Matrix();
-        matrix.postRotate(-90);
+        matrix.setRotate(-90);
         Bitmap image;
         for(Integer index: RecyclerViewAdapter.mSelectedIndex)
         {

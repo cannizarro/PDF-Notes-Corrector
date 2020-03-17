@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "604050126383",
+    "firebase_url": "https://pdf-corrector.firebaseio.com",
+    "project_id": "pdf-corrector",
+    "storage_bucket": "pdf-corrector.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604050126383:android:78d917488c0a582dd778da",
+        "android_client_info": {
+          "package_name": "com.cannizarro.pdfcorrector"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "604050126383-sk122ha67pn2fifv3kihnrjkp7pjp9mc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cannizarro.pdfcorrector",
+            "certificate_hash": "d02e31274f0782c0f9cd5f1470ff28cb29855ace"
+          }
+        },
+        {
+          "client_id": "604050126383-irds2lvonsd2to96s4c6l9s4e3rbsgsn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmlKUirL0afZx6aIgCQZCfeQ10aZJCAaI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "604050126383-irds2lvonsd2to96s4c6l9s4e3rbsgsn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

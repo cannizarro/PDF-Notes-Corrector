@@ -143,6 +143,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
             switch (item.getItemId())
             {
+
                 case R.id.right:
                     PDFProcess.getInstance().rotateRight();
 
