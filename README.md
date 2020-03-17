@@ -1,8 +1,10 @@
 # PDF-Notes-Corrector
 
+(_The downlaod link of the app is here : [Goto play store to download PDF Corrector](https://play.google.com/store/apps/details?id=com.cannizarro.pdfcorrector)._)
+
 The app is finally done with the main app source code in [PDF_Corrector](https://github.com/cannizarro/PDF-Notes-Corrector/tree/master/PDF_Corrector) folder and the prototype source code in [this](https://github.com/cannizarro/PDF-Notes-Corrector/tree/master/Prototypes). (Dated : 11/05/2019)
 
-This is a personal project born out of my own needs. The app's them is sot
+This is a personal project born out of my own needs.
 
 Remember every time when in your chat group someone sends a camera scanned PDF of some notes or documents. The PDF is generally taken in
 a hurry and many a times some pages happen to be rotated 90*n degrees (clock or anti clock) and then it becomes a pain to read.
